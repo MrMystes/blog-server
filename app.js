@@ -7,7 +7,11 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
 
+const db = require('./mysql/orm.js')
+
 const users = require('./routes/users')
+const posts = require('./routes/posts')
+//const comments = require('./routes/comments')
 
 // error handler
 onerror(app)
@@ -19,9 +23,10 @@ app.use(bodyparser({
 app.use(json())
 app.use(logger())
 
+
 app.use(cors({
   origin: function (ctx) {
-      return 'http://localhost:8080'
+      return 'http://localhost:8081'
   },
   exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
   maxAge: 5,
@@ -29,6 +34,7 @@ app.use(cors({
   allowMethods: ['GET', 'POST', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }))
+
 
 app.use(require('koa-static')(__dirname + '/public'))
 
@@ -45,8 +51,12 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
+app.use(db)
+
 // routes
 app.use(users.routes(), users.allowedMethods())
+app.use(posts.routes(), posts.allowedMethods())
+//app.use(users.routes(), users.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
