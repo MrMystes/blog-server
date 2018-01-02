@@ -26,7 +26,7 @@ app.use(logger())
 
 app.use(cors({
   origin: function (ctx) {
-      return 'http://0.0.0.0:8081'
+      return 'http://106.14.205.89'
   },
   exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
   maxAge: 5,
