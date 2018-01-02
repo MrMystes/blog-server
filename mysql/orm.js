@@ -10,7 +10,7 @@ module.exports = async function (ctx, next) {
   } else {
     await qOrm.qConnect("mysql://Mystes:ntxytq007@106.14.205.89:3306/blog_database").then(function (db) {
       connection = db;
-      db.qDefine('blog', {
+      db.qDefine('article', {
         dbID: {
           type: 'serial',
           key: true
@@ -20,9 +20,10 @@ module.exports = async function (ctx, next) {
         content: String,
         description: String,
         tag: String,
-        createAt: Date,
-        lastUpdate: Date,
-        readCount: Number
+        createAt: String,
+        lastUpdate: String,
+        readCount: Number,
+        status:Number
       });
       ctx.req.models = db.models;
       ctx.req.db = db;

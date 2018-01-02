@@ -2,27 +2,39 @@ const router = require('koa-router')()
 const fs = require('fs')
 const path = require('path')
 const multer = require('koa-multer')
+const dbModel = new Map()
+let article = null
 const upload = multer({
   dest: './public/tmp'
 })
 
 const md = require('../markdown/markdown.js')
 
-router.prefix('/posts')
-
-router.post('/', function (ctx, next) {
-  const blog = ctx.req.models.blog
-  const msg = ctx.request.body
-  let createItem = promisify(blog.create,blog)
-  await createItem([msg]).then(success=>{
-    console.log(err)
-  }).catch(err=>{
-    console.log(err)
-  })
-  ctx.body = "123123"
+router.use(async (ctx,next)=>{
+  if (!dbModel.get('article')) {
+    dbModel.set('article', ctx.req.models.article)
+    article = dbModel.get('article')
+    article.removeAsync = promisify(article.remove,article)
+  }
+  await next()
 })
 
+router.prefix('/posts')
 
+router.post('/', async function (ctx, next) {
+  const msg = ctx.request.body
+
+  await article.qCreate([msg]).then(success => {
+    console.log(success)
+    ctx.status = 200
+    ctx.message = 'OK'
+  }).catch(err => {
+    console.log(err)
+    ctx.status = 400
+    ctx.message = 'false'
+  })
+
+})
 router.post('/md2html', upload.single('file'), async function (ctx, next) {
   const file = ctx.req.file;
   let readFile = promisify(fs.readFile, fs)
@@ -46,6 +58,52 @@ router.post('/md2html', upload.single('file'), async function (ctx, next) {
 
 
 })
+
+
+router.get('/', async function (ctx, next) {
+  const {offset,limit,fields} = ctx.query 
+  await article.findAsync({},{limit:parseInt(limit),offset:parseInt(offset),only:fields.split(',')})
+    .then(result => {
+      ctx.body = result
+      ctx.status = 200
+      ctx.message = 'OK'
+    }).catch(err => {
+      console.log(err)
+    })
+})
+
+router.get('/id', async function (ctx, next) {
+  await article.findAsync({},{
+    only:['uniqueId']
+  })
+    .then(result => {
+      ctx.body = result.map(item=>{
+        return item.uniqueId
+      })
+      ctx.status = 200
+      ctx.message = 'OK'
+    }).catch(err => {
+      console.log(err)
+    })
+});
+
+router.delete('/id/:id', async function (ctx, next) {
+ 
+  let uniqueId = ctx.params.id || ''
+  await article.find({uniqueId: uniqueId}).removeAsync()
+    .then(_ => {
+      ctx.status = 200
+      ctx.message = 'OK'
+    }).catch(err=>{
+      ctx.status = 404
+      ctx.message = err
+    })
+})
+
+
+
+
+
 
 function promisify(fn, receiver) {
   return function () {
