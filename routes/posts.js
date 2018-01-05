@@ -109,7 +109,7 @@ router.get('/:id', async function (ctx, next) {
     .then(result => {
       ctx.status = 200
       ctx.message = 'Get Article Success'
-      ctx.body = result
+      ctx.body = result[0]
     })
     .catch(err => {
       console.log(err)

@@ -8,7 +8,8 @@ module.exports = async function (ctx, next) {
   if (connection) {
     await next();
   } else {
-    await qOrm.qConnect("mysql://Mystes:ntxytq007@106.14.205.89:3306/blog_database").then(function (db) {
+    await qOrm.qConnect("mysql://Mystes:ntxytq007@106.14.205.89:3306/blog_database?pool=true")
+    .then(function (db) {
       connection = db;
       db.qDefine('article', {
         dbID: {
@@ -27,7 +28,10 @@ module.exports = async function (ctx, next) {
       });
       ctx.req.models = db.models;
       ctx.req.db = db;
-    });
+    })
+    .catch(err=>{
+
+    })
     await next();
   }
 };
