@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const fs = require('fs')
 const path = require('path')
 const multer = require('koa-multer')
+const promisify = require('../utils/utils').promisify
 const dbModel = new Map()
 let article = null
 const upload = multer({
@@ -14,8 +15,7 @@ router.use(async(ctx, next) => {
   if (!dbModel.get('article')) {
     dbModel.set('article', ctx.req.models.article)
     article = dbModel.get('article')
-    article.removeAsync = promisify(article.remove, article)
-    //article.saveAsync = promisify(article.save, article)
+    
   }
   await next()
 })
@@ -124,19 +124,19 @@ router.put('/:id', async function (ctx, next) {
   await article.findAsync({uniqueId:uniqueId})
   .then(result=>{
     for(let key in msg){
-      if(result.hasOwnProperty(key)){
-        result[key] = msg[key]
+      if(result[0].hasOwnProperty(key)){
+        result[0][key] = msg[key]
       }
     }
-    result.lastUpdate = String((new Date()).getTime())
-    let save = promisify(result.save)
-    return save()
+    let saveAsync = promisify(result[0].save,result[0])
+    return saveAsync()
   })
   .then(_=>{
     ctx.status = 200
     ctx.message = 'Modify Success'
   })
   .catch(err=>{
+    console.log(err)
     ctx.status = 403
     ctx.message = 'Modify Failed'
   })
@@ -146,12 +146,15 @@ router.put('/:id', async function (ctx, next) {
 router.delete('/:id', async function (ctx, next) {
 
   let uniqueId = ctx.params.id || ''
-  await article.find({
+  await article.findAsync({
       uniqueId: uniqueId
-    }).removeAsync()
+    }).then(result=>{
+      let removeAsync = promisify(result[0].remove,result[0])
+      return removeAsync()
+    })
     .then(_ => {
       ctx.status = 200
-      ctx.message = 'OK'
+      ctx.message = 'Delete Success'
     }).catch(err => {
       ctx.status = 404
       ctx.message = err
@@ -163,22 +166,7 @@ router.delete('/:id', async function (ctx, next) {
 
 
 
-function promisify(fn, receiver) {
-  return function () {
-    let _len = arguments.length
-    let _args = [...arguments]
 
-    return new Promise((resolve, reject) => {
-      fn.apply(receiver, [].concat(_args, [function (err, data) {
-        if (err) {
-          reject(err)
-        }
-        resolve(data)
-      }]))
-    })
-  }
-
-}
 
 
 
