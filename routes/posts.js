@@ -121,7 +121,7 @@ router.get('/:id', async function (ctx, next) {
 router.put('/:id', async function (ctx, next) {
   let uniqueId = ctx.params.id || ''
   const msg = ctx.request.body
-  await article.find({uniqueId:uniqueId})
+  await article.findAsync({uniqueId:uniqueId})
   .then(result=>{
     for(let key in msg){
       if(result.hasOwnProperty(key)){
