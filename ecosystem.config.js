@@ -30,7 +30,7 @@ module.exports = {
    */
   deploy : {
     production : {
-      user : 'root',
+      user : 'Mystes',
       host : '106.14.205.89',
       ref  : 'origin/master',
       repo : 'https://github.com/MrMystes/blog-server.git',
