@@ -31,7 +31,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'https://github.com/MrMystes/blog-server.git',
       path : '/home/deploy/blog-server',
-      'post-deploy' : 'npm install && pm2 start ecosystem.config.js --env production'
+      'post-deploy' : 'npm install && npm link mysql && pm2 start ecosystem.config.js --env production'
     }
   }
 };
