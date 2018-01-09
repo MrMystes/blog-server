@@ -27,7 +27,7 @@ module.exports = {
   deploy : {
     production : {
       user : 'root',
-      host : '106.14.205.89',
+      host : 'http://www.ayuki.ink',
       ref  : 'origin/master',
       repo : 'https://github.com/MrMystes/blog-server.git',
       path : '/home/deploy/blog-server',
