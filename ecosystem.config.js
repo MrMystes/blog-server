@@ -16,7 +16,14 @@ module.exports = {
         NODE_ENV: 'production'
       }
     },
+
+    
   ],
+
+  /**
+   * Deployment section
+   * http://pm2.keymetrics.io/docs/usage/deployment/
+   */
   deploy : {
     production : {
       user : 'root',
@@ -24,7 +31,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'https://github.com/MrMystes/blog-server.git',
       path : '/home/deploy/blog-server',
-      'post-deploy' : 'npm install'
+      'post-deploy' : 'yarn & pm2 startOrRestart ecosystem.config.js --env production'
     }
   }
 };
