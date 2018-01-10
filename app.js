@@ -56,7 +56,6 @@ app.use(db)
 // routes
 app.use(users.routes(), users.allowedMethods())
 app.use(posts.routes(), posts.allowedMethods())
-//app.use(users.routes(), users.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

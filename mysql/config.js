@@ -5,8 +5,8 @@ const config = {
       "user": "Mystes",
       "password": "ntxytq007",
       "database": "blog_database",
-      "port": 3306,
-      "query": {pool: true}
+      "port": "3306",
+      "query": "pool=true"
     }
   }
 }
