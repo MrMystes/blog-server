@@ -29,7 +29,7 @@ module.exports = {
       user : 'root',
       host : 'www.ayuki.ink',
       ref  : 'origin/master',
-      repo : 'https://github.com/MrMystes/blog-server.git',
+      repo : 'git@github.com:MrMystes/blog-server.git',
       path : '/home/deploy/blog-server',
       'post-deploy' : 'npm install && npm link mysql && pm2 start ecosystem.config.js --env production'
     }
