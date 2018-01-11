@@ -70,15 +70,14 @@ router.get('/', async function (ctx, next) {
     status,
     fields
   } = ctx.query
-  let condition={}, option = {}
+  let condition={}, options = {}
   if (status!==undefined) {
     condition.status = parseInt(status)
   }
-  option.limit = limit ? parseInt(limit) : null
-  option.offset = offset ? parseInt(offset) : null
-  option.fields = fields.split(',')
-
-  await article.findAsync(condition, option)
+  options.limit = limit ? parseInt(limit) : null
+  options.offset = offset ? parseInt(offset) : null
+  options.only = fields.split(',')
+  await article.findAsync(condition, options)
     .then(result => {
       ctx.body = result
       ctx.status = 200
