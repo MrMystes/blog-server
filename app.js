@@ -6,7 +6,7 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const cors = require('koa2-cors')
-const enForceHttps = require('koa-sslify')
+
 
 const db = require('./mysql/orm.js')
 
@@ -18,7 +18,6 @@ const posts = require('./routes/posts')
 onerror(app)
 
 // middlewares
-app.use(enForceHttps());
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text', '']
 }))
