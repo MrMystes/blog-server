@@ -7,8 +7,15 @@
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
+var https = require('https');
 var exec = require('child_process').exec
+var fs = require('fs')
+var path = require('path')
 
+var options = {
+  key: fs.readFileSync('./SSL/privkey.pem'),  //ssl文件路径
+  cert: fs.readFileSync('./SSL/fullchain.pem')  //ssl文件路径
+};
 
 /**
  * Get port from environment and store in Express.
@@ -21,7 +28,8 @@ var port = normalizePort(process.env.PORT || '3000');
  * Create HTTP server.
  */
 
-var server = http.createServer(app.callback());
+//var server = http.createServer(app.callback());
+var server = https.createServer(options, app.callback())
 
 /**
  * Listen on provided port, on all network interfaces.
